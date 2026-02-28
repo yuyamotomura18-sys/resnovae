@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resnovae — 文脈を翻訳し、価値を再構築する</title>
+  <meta name="description" content="Resnovaeは、言葉になりきらない文脈を読み解き、感情と構造のあいだを翻訳し、共感を事業に変える実装体です。" />
+  <meta name="theme-color" content="#111111" />
+  <meta property="og:title" content="Resnovae — Translate Context into Value" />
+  <meta property="og:description" content="文脈を翻訳し、価値を再構築する。" />
+  <meta property="og:type" content="website" />
+
+  <!-- Favicon (inline SVG) -->
+  <link rel="icon" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 220 220"><circle cx="110" cy="110" r="80" stroke="%23C89B3C" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="460 80"/></svg>' />
+
+  <style>
+    :root{
+      --bg:#111111;
+      --panel: rgba(255,255,255,.04);
+      --text:#EAEAEA;
+      --muted: rgba(234,234,234,.68);
+      --muted2: rgba(234,234,234,.45);
+      --line: rgba(234,234,234,.12);
+      --accent:#C89B3C;
+      --accent2: rgba(200,155,60,.18);
+      --shadow: 0 20px 60px rgba(0,0,0,.55);
+      --radius: 18px;
+      --max: 1120px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Avenir Next", "Inter", "Noto Sans JP", "Yu Gothic", "Hiragino Sans", "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 20% 10%, rgba(200,155,60,.10), transparent 55%),
+                  radial-gradient(900px 700px at 80% 30%, rgba(200,155,60,.08), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.6;
+      letter-spacing:.01em;
+      overflow-x:hidden;
+    }
+
+    a{color:inherit; text-decoration:none}
+    .container{max-width:var(--max); margin:0 auto; padding:0 22px;}
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(to bottom, rgba(17,17,17,.78), rgba(17,17,17,.45));
+      border-bottom:1px solid var(--line);
+    }
+    .topbar-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      height:64px;
+    }
+    .brand{
+      display:flex; gap:12px; align-items:center;
+      min-width: 240px;
+    }
+    .mark{
+      width:26px; height:26px;
+      border-radius:50%;
+      position:relative;
+      filter: drop-shadow(0 10px 25px rgba(200,155,60,.15));
+    }
+    .mark svg{width:100%; height:100%}
+    .wordmark{
+      display:flex; flex-direction:column; line-height:1.05
+    }
+    .wordmark strong{font-weight:650; letter-spacing:.03em}
+    .wordmark span{font-size:12px; color:var(--muted2)}
+    nav{
+      display:flex; gap:18px; align-items:center;
+      font-size:13px; color:var(--muted);
+    }
+    nav a{padding:8px 10px; border-radius:999px}
+    nav a:hover{background:rgba(255,255,255,.06); color:var(--text)}
+    .cta{
+      display:flex; gap:10px; align-items:center;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background:rgba(255,255,255,.06); border-color:rgba(234,234,234,.20)}
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(200,155,60,.18), rgba(200,155,60,.10));
+      border-color: rgba(200,155,60,.35);
+      box-shadow: 0 18px 40px rgba(200,155,60,.08);
+    }
+    .btn.primary:hover{background: linear-gradient(180deg, rgba(200,155,60,.23), rgba(200,155,60,.12));}
+
+    /* Hero */
+    header.hero{
+      padding: 82px 0 44px;
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+    .headline{
+      font-size: clamp(34px, 5vw, 54px);
+      line-height:1.08;
+      letter-spacing:.02em;
+      margin: 0 0 16px;
+      font-weight:700;
+    }
+    .subhead{
+      margin:0 0 26px;
+      color:var(--muted);
+      font-size: 15px;
+      max-width: 56ch;
+    }
+    .kicker{
+      display:inline-flex; gap:10px; align-items:center;
+      font-size:12px; color:var(--muted);
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      margin-bottom:18px;
+    }
+    .dot{
+      width:6px; height:6px; border-radius:50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(200,155,60,.12);
+    }
+    .hero-actions{display:flex; gap:10px; flex-wrap:wrap}
+    .hero-card{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero-card:before{
+      content:"";
+      position:absolute;
+      inset:-120px -120px auto auto;
+      width:280px; height:280px;
+      background: radial-gradient(circle at 30% 30%, rgba(200,155,60,.18), transparent 65%);
+      transform: rotate(12deg);
+      pointer-events:none;
+    }
+    .hero-card h3{margin:0 0 10px; font-size:14px; color:var(--muted)}
+    .hero-card p{margin:0; font-size:13px; color:var(--muted)}
+    .quote{
+      margin-top:18px;
+      padding-top:18px;
+      border-top: 1px solid var(--line);
+      display:flex; gap:12px; align-items:flex-start;
+    }
+    .quote .qmark{
+      width:26px; height:26px; border-radius:999px;
+      border:1px solid rgba(200,155,60,.30);
+      background: rgba(200,155,60,.10);
+      display:flex; align-items:center; justify-content:center;
+      color: var(--accent);
+      font-weight:800;
+      flex:none;
+    }
+    .quote small{display:block; color:var(--muted2); margin-top:8px}
+
+    /* Sections */
+    section{padding: 56px 0}
+    .section-title{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:18px;
+      margin-bottom: 18px;
+    }
+    .section-title h2{
+      margin:0;
+      font-size: 22px;
+      letter-spacing:.02em;
+    }
+    .section-title p{
+      margin:0;
+      color: var(--muted);
+      font-size: 13px;
+      max-width: 60ch;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+    .card{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 14px 40px rgba(0,0,0,.35);
+    }
+    .card h3{margin:0 0 8px; font-size:15px}
+    .card p{margin:0; font-size:13px; color:var(--muted)}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(200,155,60,.28);
+      background: rgba(200,155,60,.08);
+      color: rgba(234,234,234,.90);
+      font-size:12px;
+      margin-bottom:12px;
+      width: fit-content;
+    }
+
+    .col-6{grid-column: span 6}
+    .col-4{grid-column: span 4}
+    .col-8{grid-column: span 8}
+    .col-12{grid-column: span 12}
+
+    /* Model */
+    .model-wrap{display:grid; grid-template-columns: .9fr 1.1fr; gap:14px; align-items:stretch}
+    .loop{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border-radius: var(--radius);
+      padding: 18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .loop canvas{display:block; width:100%; height:auto}
+    .steps{
+      display:grid; gap:10px;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.02);
+      padding: 14px;
+    }
+    .step{
+      display:flex; gap:12px; align-items:flex-start;
+      padding:10px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(234,234,234,.08);
+      background: rgba(255,255,255,.02);
+    }
+    .step b{font-size:12px; letter-spacing:.08em; color:rgba(234,234,234,.9)}
+    .step span{display:block; font-size:12px; color:var(--muted); margin-top:2px}
+    .num{
+      width:30px; height:30px; border-radius:999px;
+      display:flex; align-items:center; justify-content:center;
+      border: 1px solid rgba(200,155,60,.35);
+      background: rgba(200,155,60,.10);
+      color: var(--accent);
+      font-weight:750;
+      flex:none;
+    }
+
+    /* Codes */
+    .codes{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .code{
+      border:1px solid rgba(234,234,234,.10);
+      background: rgba(255,255,255,.02);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .code .k{font-size:12px; color:var(--muted2); letter-spacing:.12em}
+    .code .v{margin-top:6px; font-size:13px}
+
+    /* Footer */
+    footer{
+      padding: 44px 0 70px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+    }
+    .foot{
+      display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap;
+      align-items:flex-start;
+    }
+    .small{font-size:12px; color:var(--muted2)}
+
+    /* Responsive */
+    @media (max-width: 920px){
+      .hero-grid{grid-template-columns: 1fr; }
+      .model-wrap{grid-template-columns: 1fr}
+      .col-6,.col-4,.col-8,.col-12{grid-column: span 12}
+      nav{display:none}
+    }
+
+    /* Subtle reveal */
+    .reveal{opacity:0; transform: translateY(10px); transition: opacity .65s ease, transform .65s ease}
+    .reveal.show{opacity:1; transform:none}
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="#top" aria-label="Resnovae Home">
+        <span class="mark" aria-hidden="true">
+          <!-- Logo Mark: Translation Loop -->
+          <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="110" cy="110" r="80" stroke="#C89B3C" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="460 80"/>
+          </svg>
+        </span>
+        <span class="wordmark">
+          <strong>Resnovae</strong>
+          <span>Translate Context into Value</span>
+        </span>
+      </a>
+
+      <nav aria-label="Primary">
+        <a href="#why">Why</a>
+        <a href="#what">What</a>
+        <a href="#model">Model</a>
+        <a href="#ai">AI</a>
+        <a href="#codes">Codes</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="cta">
+        <a class="btn" href="#contact">Start a Translation</a>
+        <a class="btn primary" href="#model">Context Translation Model</a>
+      </div>
+    </div>
+  </div>
+
+  <main id="top" class="container">
+    <header class="hero">
+      <div class="hero-grid">
+        <div class="reveal">
+          <div class="kicker"><span class="dot"></span> 文脈を翻訳し、価値を再構築する</div>
+          <h1 class="headline">Translate Context<br/>into Value.</h1>
+          <p class="subhead">
+            Resnovae は、企業・地域・組織・個人が内包する「言葉になりきらない文脈」を読み解き、感情と構造のあいだを翻訳し、
+            事業・ブランド・体験・仕組みとして社会に実装する活動体です。
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#contact">相談を始める</a>
+            <a class="btn" href="#what">事業領域を見る</a>
+            <a class="btn" href="#model">翻訳モデルを見る</a>
+          </div>
+        </div>
+
+        <aside class="hero-card reveal">
+          <h3>Resnovae / Statement</h3>
+          <p>
+            数字や理論だけでは人は動かない。感情や理念だけでも事業は続かない。<br/>
+            感情と構造。現場と戦略。人とAI。<br/>
+            そのあいだにある文脈を翻訳し、共感が循環する形へ組み替える。
+          </p>
+          <div class="quote">
+            <div class="qmark">∴</div>
+            <div>
+              <div style="font-size:13px; color:rgba(234,234,234,.88)">
+                「文脈を翻訳し、共感を事業に変える」
+              </div>
+              <small>Resnovae is a Context Translation Studio.</small>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </header>
+
+    <section id="why">
+      <div class="section-title reveal">
+        <h2>Why Resnovae</h2>
+        <p>正しいが伝わらない言葉が宙に浮くとき、必要なのは思想ではなく、実装できる翻訳です。</p>
+      </div>
+      <div class="grid">
+        <div class="card col-4 reveal">
+          <div class="pill">現代の欠落</div>
+          <h3>理念が機能しない組織</h3>
+          <p>ビジョンはあるのに、現場の判断と体験に落ちていない。</p>
+        </div>
+        <div class="card col-4 reveal">
+          <div class="pill">分断</div>
+          <h3>現場と経営の断絶</h3>
+          <p>正しさと手触りが別の場所にあり、意思決定が弱体化する。</p>
+        </div>
+        <div class="card col-4 reveal">
+          <div class="pill">次段階</div>
+          <h3>AIと人の乖離</h3>
+          <p>効率化の先で、人の温度・文化・関係性が価値に変換されない。</p>
+        </div>
+
+        <div class="card col-12 reveal" style="padding:20px 20px">
+          <div class="pill">Core</div>
+          <div style="font-size:14px; color:rgba(234,234,234,.92)">
+            それは能力の問題ではない。<span style="color:var(--accent)">翻訳されていない</span>だけだ。<br/>
+            Resnovae は、この構造的欠落に対して「現場で機能する形」まで落とし込む。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="what">
+      <div class="section-title reveal">
+        <h2>What We Do</h2>
+        <p>上流の「意味の軸」を定義し、体験へ具現化し、学習可能な形で社会へひらく。</p>
+      </div>
+
+      <div class="grid">
+        <div class="card col-4 reveal">
+          <div class="pill">Strategy Unit</div>
+          <h3>戦略翻訳</h3>
+          <p>理念・文化・暗黙知・課題を読み解き、戦略と意思決定の構造へ翻訳します。</p>
+        </div>
+        <div class="card col-4 reveal">
+          <div class="pill">Experience Unit</div>
+          <h3>体験設計</h3>
+          <p>翻訳された文脈を、食・空間・時間を通じて「記憶される体験」へ実装します。</p>
+        </div>
+        <div class="card col-4 reveal">
+          <div class="pill">Learning / Publication</div>
+          <h3>教育・発信</h3>
+          <p>翻訳思考と実践知をワークショップ、講座、文章として社会循環へ接続します。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="model">
+      <div class="section-title reveal">
+        <h2>Context Translation Model</h2>
+        <p>Resnovae の活動は、読み解き→翻訳→設計→実装→反省→次の翻訳へ続く循環構造で設計されます。</p>
+      </div>
+
+      <div class="model-wrap">
+        <div class="loop reveal">
+          <canvas id="loopCanvas" width="680" height="520" aria-label="Translation Loop visualization"></canvas>
+          <div class="small" style="margin-top:10px; color:rgba(234,234,234,.45)">
+            Scroll to animate — Translation is not a line, it is a loop.
+          </div>
+        </div>
+
+        <div class="steps reveal" aria-label="Steps">
+          <div class="step">
+            <div class="num">1</div>
+            <div><b>Read</b><span>数字、言葉、行動、沈黙から文脈を読む</span></div>
+          </div>
+          <div class="step">
+            <div class="num">2</div>
+            <div><b>Translate</b><span>感情、文化、課題を構造に翻訳する</span></div>
+          </div>
+          <div class="step">
+            <div class="num">3</div>
+            <div><b>Design</b><span>事業、体験、空間、プロジェクトとして設計する</span></div>
+          </div>
+          <div class="step">
+            <div class="num">4</div>
+            <div><b>Implement</b><span>現場で機能する形まで落とし込む</span></div>
+          </div>
+          <div class="step">
+            <div class="num">5</div>
+            <div><b>Reflect</b><span>行動と反応を振り返り、言語化・構造化する</span></div>
+          </div>
+          <div class="step">
+            <div class="num">6</div>
+            <div><b>Next Translation</b><span>得られた知見を次の翻訳へつなげる</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ai">
+      <div class="section-title reveal">
+        <h2>AI as Partner</h2>
+        <p>Resnovae におけるAIは効率化のための道具ではなく、理解を増幅し、翻訳精度を高める補助知能です。</p>
+      </div>
+      <div class="grid">
+        <div class="card col-6 reveal">
+          <div class="pill">AI ≠ Automation</div>
+          <h3>Amplification of Understanding</h3>
+          <p>対話の構造化、感情パターンの抽出、差分の可視化によって、翻訳プロセスの再現性を高めます。</p>
+        </div>
+        <div class="card col-6 reveal">
+          <div class="pill">Human First</div>
+          <h3>置き換えない</h3>
+          <p>AIは人を置き換える存在ではなく、人の言葉にならない思考を「形」に立ち上げる相棒として位置づけます。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="codes">
+      <div class="section-title reveal">
+        <h2>7 Codes of Strategy</h2>
+        <p>行動指針は、静かに、しかし精密に。企画で終わらせず、実装までやり切る。</p>
+      </div>
+
+      <div class="codes reveal">
+        <div class="code"><div class="k">01</div><div class="v">Read the Context — 数字・言葉・人の癖から文脈を読む</div></div>
+        <div class="code"><div class="k">02</div><div class="v">Design the System — 感情を構造化し、仕組みに変える</div></div>
+        <div class="code"><div class="k">03</div><div class="v">Create with Others — 他分野との共創を前提に考える</div></div>
+        <div class="code"><div class="k">04</div><div class="v">Execute with Precision — 企画で終わらせず、実装までやり切る</div></div>
+        <div class="code"><div class="k">05</div><div class="v">Experiment Relentlessly — 小さく試し、素早く学ぶ</div></div>
+        <div class="code"><div class="k">06</div><div class="v">Communicate Intelligently — 感情的ではなく、知的に伝える</div></div>
+        <div class="code"><div class="k">07</div><div class="v">Leave a Trace — 結果だけでなく、痕跡を社会に残す</div></div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="section-title reveal">
+        <h2>Start a Translation</h2>
+        <p>「相談」ではなく「翻訳の開始」。最初の一通で、文脈の輪郭が立ち上がります。</p>
+      </div>
+
+      <div class="grid">
+        <div class="card col-8 reveal">
+          <div class="pill">Contact</div>
+          <h3 style="margin:0 0 6px">お問い合わせ</h3>
+          <p style="margin:0 0 14px">
+            件名に <span style="color:var(--accent)">「Start a Translation」</span> を入れてください。<br/>
+            1) いま起きている違和感　2) 望む未来　3) 期限　4) 関係者（任意）
+          </p>
+
+          <a class="btn primary" id="mailLink" href="mailto:hello@example.com?subject=Start%20a%20Translation%20%2F%20Resnovae&body=1)%20%E3%81%84%E3%81%BE%E8%B5%B7%E3%81%8D%E3%81%A6%E3%81%84%E3%82%8B%E9%81%95%E5%92%8C%E6%84%9F%0A%0A2)%20%E6%9C%9B%E3%82%80%E6%9C%AA%E6%9D%A5%0A%0A3)%20%E6%9C%9F%E9%99%90%0A%0A4)%20%E9%96%A2%E4%BF%82%E8%80%85%EF%BC%88%E4%BB%BB%E6%84%8F%EF%BC%89">メールを作成する</a>
+          <div class="small" style="margin-top:10px">
+            ※ mailto の宛先は <code style="color:rgba(234,234,234,.85)">hello@example.com</code> を差し替えてください。
+          </div>
+        </div>
+
+        <div class="card col-4 reveal">
+          <div class="pill">Identity</div>
+          <h3>Resnovae</h3>
+          <p>
+            感情を構造に、構造を感情に。<br/>
+            文脈を翻訳し、共感を事業に変える。
+          </p>
+          <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap">
+            <a class="btn" href="#top">Back to top</a>
+            <a class="btn" href="#model">Model</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="foot">
+        <div>
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px">
+            <span class="mark" aria-hidden="true" style="width:22px; height:22px">
+              <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="110" cy="110" r="80" stroke="#C89B3C" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="460 80"/>
+              </svg>
+            </span>
+            <strong style="letter-spacing:.03em">Resnovae</strong>
+          </div>
+          <div class="small">Translate Context into Value.</div>
+        </div>
+        <div class="small">
+          © <span id="year"></span> Resnovae. All rights reserved.
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // Smooth in-page navigation
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const href = a.getAttribute('href');
+        if(!href || href === '#') return;
+        const el = document.querySelector(href);
+        if(el){
+          e.preventDefault();
+          el.scrollIntoView({behavior:'smooth', block:'start'});
+        }
+      });
+    });
+
+    // Reveal on scroll
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{
+        if(en.isIntersecting) en.target.classList.add('show');
+      });
+    }, {threshold: .12});
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Translation Loop canvas (subtle, Apple-like)
+    const canvas = document.getElementById('loopCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function draw(progress){
+      const w = canvas.width, h = canvas.height;
+      ctx.clearRect(0,0,w,h);
+
+      // background noise-ish dots (subtle)
+      ctx.globalAlpha = 0.35;
+      for(let i=0;i<65;i++){
+        const x = (i*97) % w;
+        const y = (i*53) % h;
+        ctx.beginPath();
+        ctx.arc(x, y, 1.2, 0, Math.PI*2);
+        ctx.fillStyle = "rgba(234,234,234,.10)";
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      // ring
+      const cx = w*0.5, cy = h*0.46;
+      const r = Math.min(w,h)*0.28;
+
+      // outer faint ring
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI*2);
+      ctx.strokeStyle = "rgba(234,234,234,.10)";
+      ctx.lineWidth = 10;
+      ctx.stroke();
+
+      // accent arc (with gap)
+      const start = -Math.PI/2 + progress*0.9;
+      const arc = Math.PI*1.45; // not full circle
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, start, start + arc, false);
+      ctx.strokeStyle = "#C89B3C";
+      ctx.lineWidth = 10;
+      ctx.lineCap = "round";
+      ctx.shadowColor = "rgba(200,155,60,.18)";
+      ctx.shadowBlur = 16;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // labels around ring
+      const labels = ["Read","Translate","Design","Implement","Reflect","Next"];
+      const angles = [-90, -20, 30, 95, 150, 210].map(d=>d*Math.PI/180);
+      ctx.fillStyle = "rgba(234,234,234,.72)";
+      ctx.font = "600 14px ui-sans-serif, system-ui, -apple-system, 'Avenir Next', 'Inter', 'Noto Sans JP', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      labels.forEach((t, i)=>{
+        const a = angles[i] + progress*0.45;
+        const x = cx + Math.cos(a)*(r+38);
+        const y = cy + Math.sin(a)*(r+38);
+        ctx.fillText(t, x, y);
+      });
+
+      // center text
+      ctx.fillStyle = "rgba(234,234,234,.86)";
+      ctx.font = "700 18px ui-sans-serif, system-ui, -apple-system, 'Avenir Next', 'Inter', 'Noto Sans JP', sans-serif";
+      ctx.fillText("Translation Loop", cx, cy-8);
+      ctx.fillStyle = "rgba(234,234,234,.50)";
+      ctx.font = "500 13px ui-sans-serif, system-ui, -apple-system, 'Avenir Next', 'Inter', 'Noto Sans JP', sans-serif";
+      ctx.fillText("Context → Value", cx, cy+18);
+    }
+
+    // animate based on scroll position of the model section
+    const model = document.getElementById('model');
+    let animProgress = 0;
+
+    function update(){
+      const rect = model.getBoundingClientRect();
+      const vh = window.innerHeight || 800;
+      // progress 0..1 as section enters viewport
+      const t = 1 - Math.min(1, Math.max(0, (rect.top - vh*0.15) / (vh*0.85)));
+      animProgress += (t - animProgress) * 0.08;
+      draw(animProgress);
+      requestAnimationFrame(update);
+    }
+    draw(0);
+    update();
+
+    // Replace this with your real address
+    // document.getElementById('mailLink').href = "...";
+  </script>
+</body>
+</html>
